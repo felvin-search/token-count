@@ -10,7 +10,7 @@ To install Token Count, run the following command in your terminal:
 pip install token-count
 ```
 
-Usage
+## Usage
 
 Token Count has three main options:
 
@@ -30,6 +30,6 @@ token-count --directory path/to/your/directory
 
 You can provide any combination of these options. Token Count will print the token count for each input type.
 
-License
+## License
 
 This project is licensed under the MIT License.
