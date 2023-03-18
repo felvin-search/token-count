@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="token-count",
-    version="0.1.1",
+    version="0.1.3",
     packages=find_packages(),
     install_requires=[
         "tiktoken",
@@ -16,8 +16,8 @@ setup(
             "token-count = token_count:main",
         ],
     },
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Felvin",
+    author_email="team@felvin.com",
     description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.",
     long_description=long_description,
     long_description_content_type="text/markdown",
