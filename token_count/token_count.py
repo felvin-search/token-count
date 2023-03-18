@@ -8,22 +8,12 @@ import logging
 logger = logging.getLogger()
 
 class TokenCount:
-    def __init__(self):
-        '''Parsing the arguements. Creating the encoding based on model name'''
+    def __init__(self, model_name="gpt-3.5-turbo"):
+        '''Creating the encoding based on model name'''
         try:
-            self.parser = argparse.ArgumentParser(
-                description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.")
-            self.parser.add_argument("-m", "--model_name", type=str, help="model name", default = "gpt-3.5-turbo")
-            self.parser.add_argument("-d", "--directory", type=str, help="directory to count tokens in")
-            self.parser.add_argument("-f", "--file", type=str, help="file to count tokens in")
-            self.parser.add_argument("-t", "--text", type=str, help="text to count tokens in")
-
-            self.args = self.parser.parse_args()
-
-            self.encoding = tiktoken.encoding_for_model(self.args.model_name)
-
+            self.encoding = tiktoken.encoding_for_model(model_name)
         except Exception as e:
-            logger.error("Error occured: {}".format(e))
+            logger.error("Error occurred: {}".format(e))
 
     def num_tokens_from_string(self, string: str) -> int:
         """Returns the number of tokens in a text string."""
@@ -31,7 +21,7 @@ class TokenCount:
             num_tokens = len(self.encoding.encode(string))
             return num_tokens
         except Exception as e:
-            logger.error("Error occured: {}".format(e))
+            logger.error("Error occurred: {}".format(e))
 
     def num_tokens_from_file(self, file_path: str) -> int:
         """Returns the number of tokens in a text file."""
@@ -41,7 +31,7 @@ class TokenCount:
             num_tokens = len(self.encoding.encode(text))
             return num_tokens
         except Exception as e:
-            logger.error("Error occured: {}".format(e))
+            logger.error("Error occurred: {}".format(e))
 
     def num_tokens_from_directory(self, dir_path: str, ignore_gitignore=True) -> int:
         """Recursively counts the total token count of all files in a directory"""
@@ -57,37 +47,44 @@ class TokenCount:
                     continue
                 if entry.is_file():
                     try:
-                        total_token_count += num_tokens_from_file(entry.path)
+                        total_token_count += self.num_tokens_from_file(entry.path)
                     except:
                         print(f'Could not read file {entry.path}. Ignoring.')
                         continue
                 elif entry.is_dir():
-                    total_token_count += num_tokens_from_directory(entry.path)
+                    total_token_count += self.num_tokens_from_directory(entry.path)
             return total_token_count
         except Exception as e:
-            logger.error("Error occured: {}".format(e))
+            logger.error("Error occurred: {}".format(e))
 
-    def token_count(self):
-        try:
-            if not any([self.args.directory, self.args.file, self.args.text]):
-                logger.info("No input provided")
-                self.parser.print_help()
-                return
+def main():
+    parser = argparse.ArgumentParser(
+        description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.")
+    parser.add_argument("-m", "--model_name", type=str, help="model name", default="gpt-3.5-turbo")
+    parser.add_argument("-d", "--directory", type=str, help="directory to count tokens in")
+    parser.add_argument("-f", "--file", type=str, help="file to count tokens in")
+    parser.add_argument("-t", "--text", type=str, help="text to count tokens in")
 
-            if self.args.directory:
-                tokens = self.num_tokens_from_directory(self.args.directory)
-                print(tokens)
+    args = parser.parse_args()
 
-            if self.args.file:
-                tokens = self.num_tokens_from_file(self.args.file)
-                print(tokens)
+    token_count = TokenCount(args.model_name)
 
-            if self.args.text:
-                tokens = self.num_tokens_from_string(self.args.text)
-                print(tokens)
-        except Exception as e:
-            logger.error("Error occured: {}".format(e))
+    if not any([args.directory, args.file, args.text]):
+        logger.info("No input provided")
+        parser.print_help()
+        return
+
+    if args.directory:
+        tokens = token_count.num_tokens_from_directory(args.directory)
+        print(tokens)
+
+    if args.file:
+        tokens = token_count.num_tokens_from_file(args.file)
+        print(tokens)
+
+    if args.text:
+        tokens = token_count.num_tokens_from_string(args.text)
+        print(tokens)
 
 if __name__ == "__main__":
-    token_count = TokenCount()
-    token_count.token_count()
+    main()
