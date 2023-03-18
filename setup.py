@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="token-count",
-    version="0.1.3",
+    version="0.1.4",
     packages=find_packages(),
     install_requires=[
         "tiktoken",
@@ -21,6 +21,7 @@ setup(
     description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    url="https://github.com/felvin-search/token-count",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
