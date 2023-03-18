@@ -1,6 +1,6 @@
 # Token Count
 
-Token Count is a command-line utility that counts the number of tokens in a text string, file, or directory, similar to the Unix `wc` utility. It uses the OpenAI `tiktoken` library for tokenization and is compatible with GPT-3.5-turbo token counts.
+Token Count is a command-line utility that counts the number of tokens in a text string, file, or directory, similar to the Unix `wc` utility. It uses the OpenAI `tiktoken` library for tokenization and is compatible with GPT-3.5-turbo or any other OpenAI model token counts.
 
 ## Installation
 
@@ -27,8 +27,12 @@ Count tokens in a directory (recursively):
 ```bash
 token-count --directory path/to/your/directory
 ```
-
 You can provide any combination of these options. Token Count will print the token count for each input type.
+
+Additionally, you can provide any OpenAI model(gpt-4) to get token count according to the model. By default it uses "gpt-3.5-turbo".
+```bash
+token-count --model_name "gpt-4"
+```
 
 ## License
 
