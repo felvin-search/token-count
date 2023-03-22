@@ -1,2 +1,1 @@
 tiktoken
-parse_gitignore

@@ -1,8 +1,8 @@
 import argparse
 import tiktoken
-from gitignore_parser import parse_gitignore
 import os
 import logging
+import fnmatch
 
 # Create a logger
 logger = logging.getLogger()
@@ -14,6 +14,39 @@ class TokenCount:
             self.encoding = tiktoken.encoding_for_model(model_name)
         except Exception as e:
             logger.error("Error occurred: {}".format(e))
+
+    def should_ignore(self, file_path, ignore_list):
+        for pattern in ignore_list:
+            if fnmatch.fnmatch(file_path, pattern):
+                return True
+        return False
+
+    def get_ignore_list(self, repo_path):
+        ignore_list = []
+        ignore_file_path = None
+
+        gpt_ignore_path = os.path.join(repo_path, ".gptignore")
+        git_ignore_path = os.path.join(repo_path, ".gitignore")
+
+        if os.path.exists(gpt_ignore_path):
+            ignore_file_path = gpt_ignore_path
+        elif os.path.exists(git_ignore_path):
+            ignore_file_path = git_ignore_path
+        else:
+            print("No ignore file present")
+
+        if ignore_file_path:
+            with open(ignore_file_path, 'r') as ignore_file:
+                for line in ignore_file:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    ignore_list.append(line)
+
+        default_ignore_list = ['dist', 'dist/','dist/*','sdist', 'sdist/','sdist/*' '.git/', '/.git/', '.git', '.git/*', '.gptignore', '.gitignore', 'node_modules', 'node_modules/*', '__pycache__', '__pycache__/*']
+        ignore_list += default_ignore_list
+
+        return ignore_list
 
     def num_tokens_from_string(self, string: str) -> int:
         """Returns the number of tokens in a text string."""
@@ -37,13 +70,9 @@ class TokenCount:
         """Recursively counts the total token count of all files in a directory"""
         try:
             total_token_count = 0
-            gitignore_path = f'./{dir_path}/.gitignore'
-            if ignore_gitignore and os.path.isfile(gitignore_path):
-                is_ignored = parse_gitignore(gitignore_path)
-            else:
-                is_ignored = lambda x: False
+            ignore_list = self.get_ignore_list(dir_path)
             for entry in os.scandir(dir_path):
-                if entry.name.startswith('.') or is_ignored(entry.path):
+                if entry.name.startswith('.') or self.should_ignore(entry.path, ignore_list):
                     continue
                 if entry.is_file():
                     try:
