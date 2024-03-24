@@ -18,6 +18,7 @@ class TokenCount:
     def should_ignore(self, file_path, ignore_list):
         for pattern in ignore_list:
             if fnmatch.fnmatch(file_path, pattern):
+                print(f'Ignoring {file_path} because it matches {pattern}')
                 return True
         return False
 
@@ -32,8 +33,6 @@ class TokenCount:
             ignore_file_path = gpt_ignore_path
         elif os.path.exists(git_ignore_path):
             ignore_file_path = git_ignore_path
-        else:
-            print("No ignore file present")
 
         if ignore_file_path:
             with open(ignore_file_path, 'r') as ignore_file:
@@ -43,7 +42,7 @@ class TokenCount:
                         continue
                     ignore_list.append(line)
 
-        default_ignore_list = ['dist', 'dist/','dist/*','sdist', 'sdist/','sdist/*' '.git/', '/.git/', '.git', '.git/*', '.gptignore', '.gitignore', 'node_modules', 'node_modules/*', '__pycache__', '__pycache__/*']
+        default_ignore_list = ['dist', 'dist/','dist/*','sdist', 'sdist/','sdist/*' '.git/', '/.git/', '.git', '.git/*', '.gptignore', '.gitignore', 'node_modules', 'node_modules/', 'node_modules/*', '__pycache__', '__pycache__/*']
         ignore_list += default_ignore_list
 
         return ignore_list
@@ -85,35 +84,3 @@ class TokenCount:
             return total_token_count
         except Exception as e:
             logger.error("Error occurred: {}".format(e))
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.")
-    parser.add_argument("-m", "--model_name", type=str, help="model name", default="gpt-3.5-turbo")
-    parser.add_argument("-d", "--directory", type=str, help="directory to count tokens in")
-    parser.add_argument("-f", "--file", type=str, help="file to count tokens in")
-    parser.add_argument("-t", "--text", type=str, help="text to count tokens in")
-
-    args = parser.parse_args()
-
-    token_count = TokenCount(args.model_name)
-
-    if not any([args.directory, args.file, args.text]):
-        logger.info("No input provided")
-        parser.print_help()
-        return
-
-    if args.directory:
-        tokens = token_count.num_tokens_from_directory(args.directory)
-        print(tokens)
-
-    if args.file:
-        tokens = token_count.num_tokens_from_file(args.file)
-        print(tokens)
-
-    if args.text:
-        tokens = token_count.num_tokens_from_string(args.text)
-        print(tokens)
-
-if __name__ == "__main__":
-    main()

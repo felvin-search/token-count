@@ -10,7 +10,25 @@ To install Token Count, run the following command in your terminal:
 pip install token-count
 ```
 
-## Usage
+## Usage - Python Library
+
+```python
+from token_count import TokenCount
+tc = TokenCount(model_name="gpt-3.5-turbo")
+text = "Your text here"
+tokens = tc.num_tokens_from_string(text)
+print(f"Tokens in the string: {tokens}")
+
+file_path = "path/to/your/file.txt"
+tokens = tc.num_tokens_from_file(file_path)
+print(f"Tokens in the file: {tokens}")
+
+dir_path = "path/to/your/directory"
+tokens = tc.num_tokens_from_directory(dir_path)
+print(f"Tokens in the directory: {tokens}")
+```
+
+## Usage - Command Line
 
 Token Count has three main options:
 
