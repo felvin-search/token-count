@@ -5,7 +5,7 @@ import logging
 import fnmatch
 
 # Create a logger
-logger = logging.getLogger()
+loggy = logging.getLogger()
 
 class TokenCount:
     def __init__(self, model_name="gpt-3.5-turbo"):
@@ -13,7 +13,7 @@ class TokenCount:
         try:
             self.encoding = tiktoken.encoding_for_model(model_name)
         except Exception as e:
-            logger.error("Error occurred: {}".format(e))
+            loggy.error("Error occurred: {}".format(e))
 
     def should_ignore(self, file_path, ignore_list):
         for pattern in ignore_list:
@@ -53,7 +53,7 @@ class TokenCount:
             num_tokens = len(self.encoding.encode(string))
             return num_tokens
         except Exception as e:
-            logger.error("Error occurred: {}".format(e))
+            loggy.error("Error occurred: {}".format(e))
 
     def num_tokens_from_file(self, file_path: str) -> int:
         """Returns the number of tokens in a text file."""
@@ -63,7 +63,7 @@ class TokenCount:
             num_tokens = len(self.encoding.encode(text))
             return num_tokens
         except Exception as e:
-            logger.error("Error occurred: {}".format(e))
+            loggy.error("Error occurred: {}".format(e))
 
     def num_tokens_from_directory(self, dir_path: str, ignore_gitignore=True) -> int:
         """Recursively counts the total token count of all files in a directory"""
@@ -83,4 +83,4 @@ class TokenCount:
                     total_token_count += self.num_tokens_from_directory(entry.path)
             return total_token_count
         except Exception as e:
-            logger.error("Error occurred: {}".format(e))
+            loggy.error("Error occurred: {}".format(e))

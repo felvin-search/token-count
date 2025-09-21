@@ -9,7 +9,7 @@ def main():
         description="Count the number of tokens in a text string or file, similar to the Unix 'wc' utility.")
     parser.add_argument("-m", "--model_name", type=str, help="model name", default="gpt-3.5-turbo")
     parser.add_argument("-d", "--directory", type=str, help="directory to count tokens in")
-    parser.add_argument("-f", "--file", type=str, help="file to count tokens in")
+    parser.add_argument("-f", "--file", default="/dev/stdin", type=str, help="file to count tokens in")
     parser.add_argument("-t", "--text", type=str, help="text to count tokens in")
 
     args = parser.parse_args()
@@ -21,17 +21,18 @@ def main():
         parser.print_help()
         return
 
-    if args.directory:
-        tokens = token_count.num_tokens_from_directory(args.directory)
-        print(tokens)
-
-    if args.file:
-        tokens = token_count.num_tokens_from_file(args.file)
-        print(tokens)
-
     if args.text:
         tokens = token_count.num_tokens_from_string(args.text)
         print(tokens)
+
+    elif args.directory:
+        tokens = token_count.num_tokens_from_directory(args.directory)
+        print(tokens)
+
+    elif args.file:
+        tokens = token_count.num_tokens_from_file(args.file)
+        print(tokens)
+
 
 if __name__ == "__main__":
     main()
