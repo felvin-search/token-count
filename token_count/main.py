@@ -17,6 +17,7 @@ def main():
     token_count = TokenCount(args.model_name)
 
     if not any([args.directory, args.file, args.text]):
+        logger = logging.getLogger(__name__)
         logger.info("No input provided")
         parser.print_help()
         return
